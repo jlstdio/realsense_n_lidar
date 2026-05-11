@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Captured data (large files)
+captures/
+captures_3d/*.npy
+captures_3d/*.npz
+captures_3d/*.gif
+captures_3d/*.png
+
+# Models (binary blobs — add back if you want to track them)
+# models/
+
+# OS
+.DS_Store
+Thumbs.db
