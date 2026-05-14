@@ -145,10 +145,10 @@ def build_visuals(motor_deg: np.ndarray, base_mm: np.ndarray, gif_path: Path, sc
     final_fingers = traj_fingers_mm[-1]
     tcp_path = np.asarray([pts[-1] for pts in traj_pts_mm])
     fig = go.Figure()
-    fig.add_trace(go.Scatter3d(x=traj_pts_mm[0][:, 0], y=traj_pts_mm[0][:, 2], z=traj_pts_mm[0][:, 1], mode="lines+markers", name="home", line={"width": 5, "color": "rgb(80,130,255)"}))
-    fig.add_trace(go.Scatter3d(x=final_pts[:, 0], y=final_pts[:, 2], z=final_pts[:, 1], mode="lines+markers+text", name="target pose", text=["base", "j1", "j2", "j3", "tool base", "tcp"], textposition="top center", line={"width": 6, "color": "rgb(70,200,100)"}))
-    fig.add_trace(go.Scatter3d(x=final_fingers[:, 0], y=final_fingers[:, 2], z=final_fingers[:, 1], mode="lines+markers", name="gripper width", line={"width": 8, "color": "rgb(220,120,40)"}))
-    fig.add_trace(go.Scatter3d(x=tcp_path[:, 0], y=tcp_path[:, 2], z=tcp_path[:, 1], mode="lines", name="tcp path", line={"width": 4, "dash": "dash", "color": "rgb(190,60,220)"}))
+    fig.add_trace(go.Scatter3d(x=traj_pts_mm[0][:, 0], y=traj_pts_mm[0][:, 1], z=traj_pts_mm[0][:, 2], mode="lines+markers", name="home", line={"width": 5, "color": "rgb(80,130,255)"}))
+    fig.add_trace(go.Scatter3d(x=final_pts[:, 0], y=final_pts[:, 1], z=final_pts[:, 2], mode="lines+markers+text", name="target pose", text=["base", "j1", "j2", "j3", "tool base", "tcp"], textposition="top center", line={"width": 6, "color": "rgb(70,200,100)"}))
+    fig.add_trace(go.Scatter3d(x=final_fingers[:, 0], y=final_fingers[:, 1], z=final_fingers[:, 2], mode="lines+markers", name="gripper width", line={"width": 8, "color": "rgb(220,120,40)"}))
+    fig.add_trace(go.Scatter3d(x=tcp_path[:, 0], y=tcp_path[:, 1], z=tcp_path[:, 2], mode="lines", name="tcp path", line={"width": 4, "dash": "dash", "color": "rgb(190,60,220)"}))
 
     if scene_objects:
         for obj in scene_objects:
@@ -158,15 +158,14 @@ def build_visuals(motor_deg: np.ndarray, base_mm: np.ndarray, gif_path: Path, sc
             if center_mm is None:
                 continue
             c = np.asarray(center_mm, dtype=np.float64)
-            fig.add_trace(go.Scatter3d(x=[c[0]], y=[c[2]], z=[c[1]], mode="markers+text", name=obj.get("class_name", "obj"), text=[obj.get("class_name", "obj")], textposition="top center", marker={"size": 5}, showlegend=False))
+            fig.add_trace(go.Scatter3d(x=[c[0]], y=[c[1]], z=[c[2]], mode="markers+text", name=obj.get("class_name", "obj"), text=[obj.get("class_name", "obj")], textposition="top center", marker={"size": 5}, showlegend=False))
 
     fig.update_layout(
         title=title,
         scene={
-            "xaxis_title": "X (mm)",
-            "yaxis_title": "Z (mm)",
-            "zaxis_title": "Y (mm)",
-            "xaxis": {"autorange": "reversed"},
+            "xaxis_title": "X (forward, mm)",
+            "yaxis_title": "Y (right, mm)",
+            "zaxis_title": "Z (up, mm)",
             "aspectmode": "data",
         },
         height=760,
