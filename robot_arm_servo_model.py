@@ -27,7 +27,8 @@ def fk_servo(angles_deg: np.ndarray, base_mm: np.ndarray):
     p1 = np.deg2rad(90.0 - a[1])
     p2 = np.deg2rad(90.0 - a[2])
     p3 = np.deg2rad(90.0 - a[3])
-    wrist_side = np.deg2rad(a[4] - 90.0)
+    # servo[4] = horizontal wrist yaw relative to the previous link frame
+    wrist_yaw = np.deg2rad(a[4] - 90.0)
 
     origin = base_mm.astype(np.float64) / 1000.0
     theta1 = p1
@@ -42,8 +43,9 @@ def fk_servo(angles_deg: np.ndarray, base_mm: np.ndarray):
         z += link_length * np.cos(theta)
         pts_local.append(np.array([x, 0.0, z], dtype=np.float64))
 
+    # Horizontal swing: rotate tool_dir in local XY plane while preserving local Z tilt from theta3
     tool_dir = np.array(
-        [np.sin(theta3) * np.cos(wrist_side), np.sin(wrist_side), np.cos(theta3) * np.cos(wrist_side)],
+        [np.sin(theta3) * np.cos(wrist_yaw), np.sin(wrist_yaw), np.cos(theta3)],
         dtype=np.float64,
     )
     tcp_local = pts_local[-1] + LINKS_M[4] * tool_dir
@@ -54,6 +56,7 @@ def fk_servo(angles_deg: np.ndarray, base_mm: np.ndarray):
     pts_world = np.asarray([origin + rz @ p for p in pts_local], dtype=np.float64)
 
     grip_width_m = gripper_open_mm(a[5]) / 1000.0
+    # Keep gripper opening axis horizontal in local frame; yaw only affects tool heading
     side_dir_local = np.array([0.0, 1.0, 0.0], dtype=np.float64)
     finger_center = tcp_local - 0.012 * tool_dir
     finger_a = finger_center + 0.5 * grip_width_m * side_dir_local
